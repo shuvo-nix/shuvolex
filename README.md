@@ -1,39 +1,44 @@
 # ShuvoLex
 
-ShuvoLex is an academic-first writing editor for reviewing common AI-writing patterns. It runs entirely in the browser and is designed to deploy directly through GitHub Pages.
+[Open the ShuvoLex website](https://shuvo-nix.github.io/shuvolex/)
 
-## What it does
+ShuvoLex is an academic-first writing editor that reviews all 35 Humanizer patterns and makes conservative local revisions. It runs entirely in the browser and deploys through GitHub Pages.
 
-- Lets users paste a draft and select Academic, General, or Blog writing type.
-- Defaults to Academic mode.
-- Flags common patterns including filler, inflated claims, vague attribution, sales language, formulaic conclusions, staged contrasts, and long dash punctuation.
-- Applies transparent local edits such as simplifying filler phrases and replacing unnecessarily formal wording.
-- Provides word and character counts, copy, and download actions.
-- Does not send text to a server or external AI provider.
+## Live website
 
-## Important limitations
+Use the application here: [https://shuvo-nix.github.io/shuvolex/](https://shuvo-nix.github.io/shuvolex/)
 
-This is a deterministic rule-based editor, not an LLM. It cannot understand every context, verify sources, preserve every nuance automatically, or guarantee that writing will be judged as human-written. Review every output, especially academic work. Keep citations accurate and follow your school or publisher's academic-integrity rules.
+## Features
 
-The editing approach is informed by the supplied Humanizer skill and Wikipedia's [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing). A pattern flag is a prompt to review, not proof that any writing was created by AI.
+- Academic mode is the default, with General and Blog modes available.
+- Reviews all 35 patterns from the Humanizer `SKILL.md` guidance.
+- Detects content, language, grammar, style, chatbot, filler, hedging, and drafting patterns.
+- Makes conservative local edits for filler, indirect phrasing, selected AI-coded wording, long dash punctuation, and curly quotes.
+- Flags vague sources, unsupported guesses, and other high-risk issues for manual review instead of inventing information.
+- Shows word and character counts and provides copy and text-download controls.
+- Uses no backend, tracking, saved text, or API key.
 
-## Run locally
+## Limitations
 
-Open `index.html` in a browser. No install, build system, key, or backend is needed.
+ShuvoLex is a deterministic editor, not an LLM. It cannot verify evidence, sources, citations, or the full context of an argument. Review every revision carefully and follow your institution's academic-integrity requirements. A pattern flag is a review prompt, not proof of AI authorship.
+
+## Local use
+
+Open `index.html` in a browser. No build process, API key, or backend is needed.
 
 ## Publish with GitHub Pages
 
-1. Go to the repository Settings.
-2. Select Pages from the left sidebar.
-3. Under Build and deployment, set Source to Deploy from a branch.
-4. Choose branch main, folder /(root), then click Save.
-5. GitHub will publish the site at `https://shuvo-nix.github.io/ShuvoLex/` after deployment completes.
+1. Open repository Settings.
+2. Select Pages.
+3. Under Build and deployment, select Deploy from a branch.
+4. Select branch `main` and folder `/(root)`.
+5. Save, then visit [https://shuvo-nix.github.io/shuvolex/](https://shuvo-nix.github.io/shuvolex/).
 
-## Project files
+## Files
 
-- `index.html`: application structure and interface
-- `style.css`: responsive visual design
-- `app.js`: local pattern scanner and rewriting logic
+- `index.html`: application interface
+- `style.css`: responsive styling
+- `app.js`: 35-pattern scanner and local revision engine
 
 ## License
 
