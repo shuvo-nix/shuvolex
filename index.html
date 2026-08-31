@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ShuvoLex is an academic-first, local AI-writing pattern editor." />
+  <title>ShuvoLex | Write like you mean it</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <a class="brand" href="#top" aria-label="ShuvoLex home"><span class="brand-mark">S</span><span>ShuvoLex</span></a>
+      <div class="hero-copy">
+        <p class="eyebrow">Academic-first writing editor</p>
+        <h1>Make the writing sound like <em>you.</em></h1>
+        <p class="lede">Paste a draft, select its purpose, and edit common AI-writing patterns without sending your text anywhere.</p>
+      </div>
+      <p class="privacy"><span class="privacy-dot"></span> Runs locally in your browser</p>
+    </header>
+    <section class="controls" aria-label="Writing controls">
+      <div class="mode-group" role="group" aria-label="Writing type">
+        <span class="control-label">Writing type</span>
+        <button class="mode active" data-mode="academic" aria-pressed="true">Academic</button>
+        <button class="mode" data-mode="general" aria-pressed="false">General</button>
+        <button class="mode" data-mode="blog" aria-pressed="false">Blog</button>
+      </div>
+      <div class="control-divider"></div>
+      <label class="strength-label">Edit strength
+        <select id="strength"><option value="light">Light</option><option value="balanced" selected>Balanced</option><option value="direct">Direct</option></select>
+      </label>
+      <button id="humanize" class="humanize-btn"><span>Rewrite draft</span><kbd>CTRL/CMND + ENTER</kbd></button>
+    </section>
+    <section class="workspace" id="top">
+      <article class="editor-card input-card">
+        <div class="card-header"><div><p class="card-kicker">01 / Original</p><h2>Your draft</h2></div><span id="inputStats" class="stats">0 words | 0 characters</span></div>
+        <textarea id="inputText" spellcheck="true" placeholder="Paste AI-generated writing here..."></textarea>
+        <div class="card-footer"><button id="sample" class="text-button">Load academic example</button><button id="clear" class="text-button muted">Clear</button></div>
+      </article>
+      <div class="transfer" aria-hidden="true"><span>TO</span></div>
+      <article class="editor-card output-card">
+        <div class="card-header"><div><p class="card-kicker">02 / Edited</p><h2>Revised draft</h2></div><span id="outputStats" class="stats">Waiting for text</span></div>
+        <div id="outputText" class="output-text empty" aria-live="polite">Your revised text will appear here.</div>
+        <div class="card-footer output-actions"><button id="copy" class="text-button" disabled>Copy text</button><button id="download" class="text-button" disabled>Download .txt</button></div>
+      </article>
+    </section>
+    <section class="insights" aria-labelledby="insightsTitle">
+      <div class="insights-intro"><p class="eyebrow">Editor notes</p><h2 id="insightsTitle">What ShuvoLex checks</h2><p>These are signals to review, not evidence that text was written by AI.</p></div>
+      <div id="patternList" class="pattern-list"><p class="quiet">Paste text to see patterns worth reviewing.</p></div>
+    </section>
+    <section class="method">
+      <div><p class="eyebrow">How it works</p><h2>Clearer prose, not fabricated prose.</h2></div>
+      <div class="method-copy"><p>ShuvoLex makes local, deterministic edits for common patterns such as filler, inflated claims, vague attributions, repetitive openings, and unnecessary passive voice. It never calls an external AI service and cannot verify facts or sources.</p><p>Review every revision before submitting academic work. Keep your citations, original ideas, evidence, and institutional integrity requirements intact.</p></div>
+    </section>
+    <footer><span>ShuvoLex</span><span>Built for careful writing</span><a href="https://github.com/shuvo-nix/ShuvoLex" target="_blank" rel="noreferrer">View source</a></footer>
+  </main>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
