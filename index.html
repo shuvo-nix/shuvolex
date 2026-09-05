@@ -1,63 +1,139 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="ShuvoLex is an academic-first, local AI-writing pattern editor." />
-  <title>ShuvoLex | Write like you mean it</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ShuvoLex | AI text humanizer</title>
+<meta name="description" content="ShuvoLex rewrites AI-sounding text into natural writing. Academic, General, and Blog modes. Local 35-pattern review plus optional AI rewrite with your own key."/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236366f1'/%3E%3Ctext x='16' y='21' font-family='Arial' font-size='16' fill='white' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css?v=2.0"/>
 </head>
 <body>
-  <main class="shell">
-    <header class="hero">
-      <a class="brand" href="#top" aria-label="ShuvoLex home"><span class="brand-mark">S</span><span>ShuvoLex</span></a>
-      <div class="hero-copy">
-        <p class="eyebrow">Academic-first writing editor</p>
-        <h1>Make the writing sound like <em>you.</em></h1>
-        <p class="lede">Paste a draft, select its purpose, and edit common AI-writing patterns without sending your text anywhere.</p>
+<div class="app">
+<header class="topbar">
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+    <span class="brand-name">shuvolex</span>
+    <span class="version">v2.0</span>
+  </div>
+  <div class="top-actions">
+    <span class="privacy-pill"><span class="dot"></span>Local first. No server.</span>
+    <a class="icon-btn" href="https://github.com/shuvo-nix/shuvolex" target="_blank" rel="noreferrer" title="View source on GitHub" aria-label="View source on GitHub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+    <button class="icon-btn" id="openSettings" title="AI settings" aria-label="AI settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Paste AI text. Get human writing.</h1>
+  <p>35-pattern review on every keystroke, plus a real AI rewrite when you add your own key. Academic mode is the default.</p>
+</section>
+
+<section class="controls">
+  <div class="segmented" id="modes" role="group" aria-label="Writing type">
+    <button class="seg active" data-mode="academic">Academic</button>
+    <button class="seg" data-mode="general">General</button>
+    <button class="seg" data-mode="blog">Blog</button>
+  </div>
+  <label class="select-wrap">Strength
+    <select id="strength">
+      <option value="light">Light</option>
+      <option value="balanced" selected>Balanced</option>
+      <option value="deep">Deep</option>
+    </select>
+  </label>
+  <div class="segmented engine-toggle" role="group" aria-label="Engine">
+    <button class="seg active" id="engineLocal">Local rules</button>
+    <button class="seg" id="engineAI">AI rewrite <span class="mini-badge">your key</span></button>
+  </div>
+  <button id="humanize" class="primary-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
+    <span id="humanizeLabel">Humanize</span><kbd>Ctrl+Enter</kbd>
+  </button>
+</section>
+
+<main class="grid">
+  <section class="card">
+    <header class="card-head">
+      <h2>Original</h2>
+      <div class="card-tools">
+        <button class="icon-btn" id="pasteBtn" title="Paste from clipboard" aria-label="Paste from clipboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></button>
+        <button class="icon-btn" id="sampleBtn" title="Load academic sample" aria-label="Load academic sample"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></button>
+        <button class="icon-btn danger" id="clearBtn" title="Clear input" aria-label="Clear input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
       </div>
-      <p class="privacy"><span class="privacy-dot"></span> Runs locally in your browser</p>
     </header>
-    <section class="controls" aria-label="Writing controls">
-      <div class="mode-group" role="group" aria-label="Writing type">
-        <span class="control-label">Writing type</span>
-        <button class="mode active" data-mode="academic" aria-pressed="true">Academic</button>
-        <button class="mode" data-mode="general" aria-pressed="false">General</button>
-        <button class="mode" data-mode="blog" aria-pressed="false">Blog</button>
+    <textarea id="inputText" spellcheck="true" placeholder="Paste AI-generated text here..."></textarea>
+    <footer class="card-foot"><span id="inputStats">0 words</span></footer>
+  </section>
+
+  <section class="card">
+    <header class="card-head">
+      <h2>Humanized</h2>
+      <div class="card-tools">
+        <button class="icon-btn" id="copyBtn" title="Copy result" aria-label="Copy result" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+        <button class="icon-btn" id="downloadBtn" title="Download .txt" aria-label="Download .txt" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></button>
       </div>
-      <div class="control-divider"></div>
-      <label class="strength-label">Edit strength
-        <select id="strength"><option value="light">Light</option><option value="balanced" selected>Balanced</option><option value="direct">Direct</option></select>
-      </label>
-      <button id="humanize" class="humanize-btn"><span>Rewrite draft</span><kbd>CTRL/CMND + ENTER</kbd></button>
-    </section>
-    <section class="workspace" id="top">
-      <article class="editor-card input-card">
-        <div class="card-header"><div><p class="card-kicker">01 / Original</p><h2>Your draft</h2></div><span id="inputStats" class="stats">0 words | 0 characters</span></div>
-        <textarea id="inputText" spellcheck="true" placeholder="Paste AI-generated writing here..."></textarea>
-        <div class="card-footer"><button id="sample" class="text-button">Load academic example</button><button id="clear" class="text-button muted">Clear</button></div>
-      </article>
-      <div class="transfer" aria-hidden="true"><span>TO</span></div>
-      <article class="editor-card output-card">
-        <div class="card-header"><div><p class="card-kicker">02 / Edited</p><h2>Revised draft</h2></div><span id="outputStats" class="stats">Waiting for text</span></div>
-        <div id="outputText" class="output-text empty" aria-live="polite">Your revised text will appear here.</div>
-        <div class="card-footer output-actions"><button id="copy" class="text-button" disabled>Copy text</button><button id="download" class="text-button" disabled>Download .txt</button></div>
-      </article>
-    </section>
-    <section class="insights" aria-labelledby="insightsTitle">
-      <div class="insights-intro"><p class="eyebrow">Editor notes</p><h2 id="insightsTitle">What ShuvoLex checks</h2><p>These are signals to review, not evidence that text was written by AI.</p></div>
-      <div id="patternList" class="pattern-list"><p class="quiet">Paste text to see patterns worth reviewing.</p></div>
-    </section>
-    <section class="method">
-      <div><p class="eyebrow">How it works</p><h2>Clearer prose, not fabricated prose.</h2></div>
-      <div class="method-copy"><p>ShuvoLex makes local, deterministic edits for common patterns such as filler, inflated claims, vague attributions, repetitive openings, and unnecessary passive voice. It never calls an external AI service and cannot verify facts or sources.</p><p>Review every revision before submitting academic work. Keep your citations, original ideas, evidence, and institutional integrity requirements intact.</p></div>
-    </section>
-    <footer><span>ShuvoLex</span><span>Built for careful writing</span><a href="https://github.com/shuvo-nix/ShuvoLex" target="_blank" rel="noreferrer">View source</a></footer>
-  </main>
-  <div id="toast" class="toast" role="status"></div>
-  <script src="app.js"></script>
+    </header>
+    <div id="outputText" class="output empty" aria-live="polite">Your humanized text will appear here.</div>
+    <footer class="card-foot"><span id="outputStats">Waiting</span><span id="engineNote" class="engine-note"></span></footer>
+  </section>
+</main>
+
+<section class="review">
+  <header><h2>35-pattern review</h2><p>Live checks from the Humanizer skill. A flag is a review prompt, not proof of AI authorship.</p></header>
+  <div id="patternList" class="chips"><p class="quiet">Paste text to see the review.</p></div>
+</section>
+
+<footer class="foot">
+  <span>shuvolex</span>
+  <span>Local engine keeps text in your browser. AI mode calls only your chosen provider with your own key.</span>
+  <a href="https://github.com/shuvo-nix/shuvolex" target="_blank" rel="noreferrer">Source</a>
+</footer>
+</div>
+
+<div class="modal" id="settingsModal" hidden>
+  <div class="modal-card">
+    <header class="modal-head">
+      <h2>AI rewrite settings</h2>
+      <button class="icon-btn" id="closeSettings" aria-label="Close settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button>
+    </header>
+    <p class="modal-note">Your key is used only from this browser tab and is sent only to the provider you choose. It is never stored in the repository and never sent anywhere else. Tick remember to keep it in this browser for next time.</p>
+    <label class="field">Provider
+      <select id="provider">
+        <option value="openrouter">OpenRouter (recommended)</option>
+        <option value="gemini">Google Gemini</option>
+        <option value="custom">OpenAI-compatible endpoint</option>
+      </select>
+    </label>
+    <label class="field" id="endpointRow" hidden>Endpoint URL
+      <input id="endpoint" type="url" placeholder="https://api.example.com/v1/chat/completions"/>
+    </label>
+    <label class="field">API key
+      <input id="apiKey" type="password" placeholder="Paste your key" autocomplete="off"/>
+    </label>
+    <label class="field">Model
+      <input id="model" list="models" value="meta-llama/llama-3.1-70b-instruct"/>
+      <datalist id="models">
+        <option value="meta-llama/llama-3.1-70b-instruct"></option>
+        <option value="google/gemini-flash-1.5"></option>
+        <option value="openai/gpt-4o-mini"></option>
+        <option value="anthropic/claude-3.5-sonnet"></option>
+        <option value="gemini-1.5-flash"></option>
+        <option value="gemini-1.5-pro"></option>
+      </datalist>
+    </label>
+    <label class="check"><input type="checkbox" id="rememberKey"/> Remember key in this browser</label>
+    <div class="modal-actions">
+      <button class="ghost-btn" id="testKey">Test connection</button>
+      <button class="primary-btn" id="saveSettings">Save settings</button>
+    </div>
+    <p class="modal-status" id="settingsStatus"></p>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status"></div>
+<script src="app.js?v=2.0"></script>
 </body>
 </html>
