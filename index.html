@@ -4,12 +4,12 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>ShuvoLex | AI text humanizer</title>
-<meta name="description" content="ShuvoLex rewrites AI-sounding text into natural writing. Academic, General, and Blog modes. Local 35-pattern review plus optional AI rewrite with your own key."/>
+<meta name="description" content="ShuvoLex rewrites AI-sounding text into natural writing. Academic, General, and Blog modes. Free built-in AI, no key needed, plus a local 35-pattern review."/>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236366f1'/%3E%3Ctext x='16' y='21' font-family='Arial' font-size='16' fill='white' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=2.3"/>
+<link rel="stylesheet" href="style.css?v=2.4"/>
 </head>
 <body>
 <div class="app">
@@ -17,10 +17,10 @@
   <div class="brand">
     <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
     <span class="brand-name">shuvolex</span>
-    <span class="version">v2.3</span>
+    <span class="version">v2.4</span>
   </div>
   <div class="top-actions">
-    <span class="privacy-pill"><span class="dot"></span>Local first. No server.</span>
+    <span class="privacy-pill"><span class="dot"></span>Free AI included. No key needed.</span>
     <a class="icon-btn" href="https://github.com/shuvo-nix/shuvolex" target="_blank" rel="noreferrer" title="View source on GitHub" aria-label="View source on GitHub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
     <button class="icon-btn" id="openSettings" title="AI settings" aria-label="AI settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
   </div>
@@ -40,8 +40,8 @@
     </select>
   </label>
   <div class="segmented" role="group" aria-label="Engine">
-    <button class="seg active" id="engineLocal">Local rules</button>
-    <button class="seg" id="engineAI">AI rewrite <span class="mini-badge">your key</span></button>
+    <button class="seg active" id="engineAI">AI rewrite <span class="mini-badge">free</span></button>
+    <button class="seg" id="engineLocal">Local rules</button>
   </div>
   <button class="primary-btn humanizeBtn" id="humanizeBtn">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
@@ -85,13 +85,13 @@
 </main>
 
 <section class="review">
-  <header><h2>35-pattern review</h2><p>Live checks from the Humanizer skill, including the words-to-watch lists inside each pattern. A flag is a review prompt, not proof of AI authorship.</p></header>
+  <header><h2>35-pattern review</h2><p>Live checks from the Humanizer skill, based on Wikipedia's Signs of AI writing. A flag is a review prompt, not proof of AI authorship.</p></header>
   <div id="patternList" class="chips"><p class="quiet">Paste text to see the review.</p></div>
 </section>
 
 <footer class="foot">
   <span>shuvolex</span>
-  <span>Local engine keeps text in your browser. AI mode calls only your chosen provider with your own key.</span>
+  <span>Free AI mode uses a public model endpoint. Add your own key in settings for private calls. Local mode never sends text anywhere.</span>
   <a href="https://github.com/shuvo-nix/shuvolex" target="_blank" rel="noreferrer">Source</a>
 </footer>
 </div>
@@ -102,18 +102,20 @@
       <h2>AI rewrite settings</h2>
       <button class="icon-btn" id="closeSettings" aria-label="Close settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button>
     </header>
-    <p class="modal-note">Easiest way: copy the code snippet your provider shows you (OpenRouter, Gemini, or any OpenAI-compatible one), paste it below, and the key, model, and endpoint fill in automatically. Your key is sent only to that provider and never stored in the repository.</p>
-    <label class="field">Paste provider code (optional)
-      <textarea id="codePaste" rows="4" spellcheck="false" placeholder="Paste the JavaScript, TypeScript, or Python snippet from your provider here..."></textarea>
-    </label>
-    <button class="ghost-btn full" id="fillCodeBtn" type="button">Fill key and model from pasted code</button>
+    <p class="modal-note">The free built-in model works with no key. For better quality and privacy, add your own key: paste the code snippet your provider shows you and the fields fill in automatically. Anything you type applies immediately, no save required. Keys are sent only to your provider and never to the repository.</p>
     <label class="field">Provider
       <select id="provider">
-        <option value="openrouter">OpenRouter (recommended)</option>
+        <option value="free" selected>Free built-in (no key needed)</option>
+        <option value="openrouter">OpenRouter</option>
         <option value="gemini">Google Gemini</option>
         <option value="custom">OpenAI-compatible endpoint</option>
       </select>
     </label>
+    <div id="keyFields">
+    <label class="field">Paste provider code (optional)
+      <textarea id="codePaste" rows="4" spellcheck="false" placeholder="Paste the JavaScript, TypeScript, or Python snippet from your provider here..."></textarea>
+    </label>
+    <button class="ghost-btn full" id="fillCodeBtn" type="button">Fill key and model from pasted code</button>
     <label class="field" id="endpointRow" hidden>Endpoint URL
       <input id="endpoint" type="url" placeholder="https://api.example.com/v1/chat/completions"/>
     </label>
@@ -132,9 +134,10 @@
       </datalist>
     </label>
     <label class="check"><input type="checkbox" id="rememberKey"/> Remember key in this browser</label>
+    </div>
     <div class="modal-actions">
       <button class="ghost-btn" id="testKey">Test connection</button>
-      <button class="primary-btn" id="saveSettings">Save settings</button>
+      <button class="primary-btn" id="saveSettings">Done</button>
     </div>
     <p class="modal-status" id="settingsStatus"></p>
   </div>
@@ -142,6 +145,6 @@
 
 <div id="toast" class="toast" role="status"></div>
 <script>window.addEventListener('error',function(e){var t=document.getElementById('toast');if(t&&e.message){t.textContent='App error: '+e.message;t.classList.add('show');}});</script>
-<script src="app.js?v=2.3"></script>
+<script src="app.js?v=2.4"></script>
 </body>
 </html>

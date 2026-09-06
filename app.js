@@ -1,6 +1,6 @@
 const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const input=$('#inputText'),output=$('#outputText'),list=$('#patternList'),strengthSel=$('#strength'),toast=$('#toast');
-let mode='academic',engine='local',lastResult='';
+let mode='academic',engine='ai',lastResult='';
 const sample=`In order to achieve this goal, it is important to note that the implementation of transparent assessment practices serves as a crucial component of the modern educational landscape. Additionally, experts argue that this approach not only fosters engagement but also plays a pivotal role in shaping outcomes. The system boasts a wide range of features, showcasing its vibrant potential. In conclusion, the future looks bright. I hope this helps!`;
 const rules=[
 [1,'Inflated importance',/\b(crucial|pivotal|vital role|significant role|testament|key turning point|indelible mark|deeply rooted|marks a shift|represents a shift|focal point|evolving landscape|setting the stage|underscores its|highlights its importance|plays a vital|plays a crucial|plays a key)\b/gi,'State the concrete fact instead of claiming broad importance.'],
@@ -56,7 +56,7 @@ const phrases=[
 [/\ba wide variety of\b/gi,'many'],[/\ba wide range of\b/gi,'many'],[/\ba wide array of\b/gi,'many'],[/\ba plethora of\b/gi,'many'],
 [/\ba significant number of\b/gi,'many'],[/\ba considerable amount of\b/gi,'much'],[/\ba growing number of\b/gi,'more'],
 [/\ba (crucial|vital|pivotal|key) part of\b/gi,'part of'],
-[/\bplays? an? (important|important|crucial|vital|key|pivotal|significant|critical|major) role in\b/gi,'matters for'],
+[/\bplays? an? (important|crucial|vital|key|pivotal|significant|critical|major) role in\b/gi,'matters for'],
 [/\bIn order to\b/g,'To'],[/\bin order to\b/g,'to'],
 [/\b[Dd]ue to the fact that\b/g,m=>m[0]==='D'?'Because':'because'],
 [/\bat this point in time\b/gi,'now'],[/\bin the event that\b/gi,'if'],[/\bin close proximity to\b/gi,'near'],[/\bon a daily basis\b/gi,'daily'],
@@ -119,7 +119,7 @@ while(i<n&&j<m){if(A[i]===B[j]){keep[j]=true;i++;j++}else if(dp[i+1][j]>=dp[i][j
 const parts=out.split(/(\s+)/);let bi=0,html='',changed=0;
 for(const p of parts){if(!p)continue;if(/^\s+$/.test(p)){html+=p;continue}const w=escapeHTML(p);if(keep[bi]){html+=w}else{html+='<mark>'+w+'</mark>';changed++}bi++}
 output.innerHTML=html;return m?Math.round(changed/m*100):0}
-const settings={provider:'openrouter',key:'',model:'openai/gpt-4o-mini',endpoint:''};
+const settings={provider:'free',key:'',model:'openai/gpt-4o-mini',endpoint:''};
 try{const saved=JSON.parse(localStorage.getItem('shuvolex.settings')||'null');if(saved)Object.assign(settings,saved)}catch(e){}
 function systemPrompt(){const tone=mode==='academic'?'Use a formal academic register. Expand all contractions. State claims directly instead of first-person hedges like I think. Keep citations, technical terms, numbers, and names exactly as given. Neutral and precise.':mode==='blog'?'Use a conversational blog voice. Contractions are welcome. First person is allowed. Keep personality and asides, but remove sales fluff and AI stock phrases.':'Use plain, natural everyday English. Balanced formality. Clear and direct.';
 const depth=strengthSel.value==='light'?'Make minimal edits. Fix only obvious AI patterns and keep the original sentences.':strengthSel.value==='deep'?'Rewrite freely for natural human flow. Restructure sentences and merge or split them, but keep every fact.':'Rewrite moderately. Keep the structure but fix phrasing, rhythm, and stock wording.';
@@ -127,18 +127,22 @@ return `You are ShuvoLex, an expert human-writing editor. Rewrite the user text 
 
 Hard rules:
 - Never invent facts, names, numbers, dates, quotes, or citations. Keep every claim from the source.
+- Keep specific, unusual details. Do not smooth them into generic, positive statements.
 - Never use em dashes or en dashes. Use commas, colons, parentheses, or new sentences. Use straight quotes only.
 - Remove chatbot artifacts: greetings, offers, closings like I hope this helps.
 - Remove sales language, inflated importance claims, vague attributions like experts say, formulaic conclusions, and stock AI words such as delve, crucial, pivotal, underscore, showcase, tapestry, landscape, vibrant, foster, garner, intricate, interplay, additionally, testament.
 - Prefer plain verbs: is, has, shows. Avoid serves as, boasts, not only but also, and forced groups of three.
 - Replace filler: in order to becomes to, due to the fact that becomes because.
-- Vary sentence length naturally. No dramatic fragment runs. No heading repeated as the first sentence.
+- Vary sentence length naturally, mixing short and long sentences. No dramatic fragment runs. No heading repeated as the first sentence.
 - End on the last concrete fact, not on generic optimism.
 - Return only the rewritten text. No explanations, no preface.
 
 Tone: ${tone}
 Depth: ${depth}`}
 async function callAI(text){const sys=systemPrompt();
+if(settings.provider==='free'){const res=await fetch('https://text.pollinations.ai/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'system',content:sys},{role:'user',content:text}],model:'openai',private:true})});
+if(!res.ok)throw new Error('Free service error '+res.status+'. Try again in a moment, add your own key in settings, or switch to Local rules.');
+return (await res.text()).trim()}
 if(settings.provider==='gemini'){const url=`https://generativelanguage.googleapis.com/v1beta/models/${settings.model||'gemini-1.5-flash'}:generateContent?key=${encodeURIComponent(settings.key)}`;
 const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system_instruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text}]}],generationConfig:{temperature:0.7}})});
 const data=await res.json();if(!res.ok)throw new Error(data.error&&data.error.message||('Gemini error '+res.status));
@@ -157,20 +161,21 @@ const pct=diffRender(input.value,r);$('#engineNote').textContent=src+(pct>=0?' |
 function showError(msg){lastResult='';output.classList.remove('empty');output.classList.add('err');output.textContent=msg;$('#outputStats').textContent='Error';$('#engineNote').textContent='';$('#copyBtn').disabled=$('#downloadBtn').disabled=$('#clearOutBtn').disabled=true}
 function setBusy(b){$$('.humanizeBtn').forEach(x=>x.disabled=b);$$('.humanizeLabel').forEach(x=>x.textContent=b?'Humanizing...':'Humanize')}
 async function run(){const text=input.value.trim();if(!text){note('Paste some text first.');return}
-if(engine==='ai'){if(!settings.key){openModal();note('Add your API key, or stay on Local rules.');return}
-setBusy(true);try{let r=await callAI(text);if(!r)throw new Error('The provider returned an empty response. Try another model.');r=r.replace(/[\u2014\u2013]/g,',').replace(/\s+([,.;!?])/g,'$1').trim();show(r,'AI rewrite | '+settings.provider);note('Done. Changed words are marked.')}
-catch(err){showError('AI request failed: '+err.message+'\n\nCheck provider, key, and model in settings (gear icon), or switch to Local rules. Your text was not sent anywhere else.')}
+if(engine==='ai'){if(settings.provider!=='free'&&!settings.key){openModal();note('Add your API key, or pick the free built-in provider.');return}
+setBusy(true);try{let r=await callAI(text);if(!r)throw new Error('The provider returned an empty response. Try another model.');r=r.replace(/[\u2014\u2013]/g,',').replace(/\s+([,.;!?])/g,'$1').trim();show(r,settings.provider==='free'?'AI rewrite | free built-in':'AI rewrite | '+settings.provider);note('Done. Changed words are marked.')}
+catch(err){showError('AI request failed: '+err.message+'\n\nYou can switch to Local rules in the engine toggle, or open settings (gear icon) and add your own key.')}
 setBusy(false);return}
 const r=revise(text);
 if(r===text){note('No patterns matched. This text already looks clean.')}else{note('Revision ready. Changed words are marked.')}
 show(r,'Local 35-rule engine')}
 function updateEngineUI(){$('#engineLocal').classList.toggle('active',engine==='local');$('#engineAI').classList.toggle('active',engine==='ai')}
-function setEngine(e){engine=e;updateEngineUI();if(e==='ai'&&!settings.key)openModal()}
+function setEngine(e){engine=e;updateEngineUI();if(e==='ai'&&settings.provider!=='free'&&!settings.key)openModal()}
 $('#engineLocal').addEventListener('click',()=>setEngine('local'));
 $('#engineAI').addEventListener('click',()=>setEngine('ai'));
 const modal=$('#settingsModal'),status=$('#settingsStatus');
 function providerDefaults(p){return p==='gemini'?'gemini-1.5-flash':p==='custom'?'gpt-4o-mini':'openai/gpt-4o-mini'}
-function loadModels(){if(settings.provider!=='openrouter')return;fetch('https://openrouter.ai/api/v1/models').then(r=>r.json()).then(d=>{const dl=$('#models');if(d&&d.data&&d.data.length){dl.innerHTML=d.data.slice(0,400).map(m=>`<option value="${m.id}"></option>`).join('')}}).catch(()=>{})}
+function updateProviderUI(){const p=$('#provider').value;$('#keyFields').hidden=(p==='free');$('#endpointRow').hidden=(p!=='custom')}
+function loadModels(){if($('#provider').value!=='openrouter')return;fetch('https://openrouter.ai/api/v1/models').then(r=>r.json()).then(d=>{const dl=$('#models');if(d&&d.data&&d.data.length){dl.innerHTML=d.data.slice(0,400).map(m=>`<option value="${m.id}"></option>`).join('')}}).catch(()=>{})}
 function fillFromCode(){const code=$('#codePaste').value;let found=false;
 if(!code.trim()){status.textContent='Paste the provider code snippet first.';status.className='modal-status err';return}
 const orKey=code.match(/sk-or-[A-Za-z0-9-]+/),gKey=code.match(/AIza[0-9A-Za-z_-]{20,}/),oaKey=code.match(/sk-[A-Za-z0-9_-]{20,}/);
@@ -181,19 +186,21 @@ else if(gKey){settings.provider='gemini';$('#provider').value='gemini';$('#apiKe
 else if(oaKey){if(urlM&&/openrouter/.test(urlM[0])){settings.provider='openrouter';$('#provider').value='openrouter'}else{settings.provider='custom';$('#provider').value='custom'}$('#apiKey').value=oaKey[0];found=true}
 if(modelM)$('#model').value=modelM[1];
 if(urlM&&settings.provider==='custom'&&/chat\/completions/.test(urlM[0]))$('#endpoint').value=urlM[0];
-$('#endpointRow').hidden=settings.provider!=='custom';
-settings.key=$('#apiKey').value.trim();settings.model=$('#model').value.trim();settings.endpoint=$('#endpoint').value.trim();
-status.textContent=found?'Key and model extracted. Press Test connection or Save settings.':'No API key found in that snippet. Copy the full code from your provider and paste it again.';
+settings.provider=$('#provider').value;settings.key=$('#apiKey').value.trim();settings.model=$('#model').value.trim();settings.endpoint=$('#endpoint').value.trim();updateProviderUI();
+status.textContent=found?'Key and model extracted. Press Test connection or Done.':'No API key found in that snippet. Copy the full code from your provider and paste it again.';
 status.className='modal-status '+(found?'ok':'err')}
-function openModal(){$('#provider').value=settings.provider;$('#apiKey').value=settings.key;$('#model').value=settings.model||providerDefaults(settings.provider);$('#endpoint').value=settings.endpoint;$('#endpointRow').hidden=settings.provider!=='custom';status.textContent='';status.className='modal-status';modal.hidden=false;loadModels()}
-function closeModal(){modal.hidden=true;if(engine==='ai'&&!settings.key){engine='local';updateEngineUI();note('No key saved. Switched back to Local rules.')}}
+function openModal(){$('#provider').value=settings.provider;$('#apiKey').value=settings.key;$('#model').value=settings.model||providerDefaults(settings.provider);$('#endpoint').value=settings.endpoint;updateProviderUI();status.textContent='';status.className='modal-status';modal.hidden=false;loadModels()}
+function closeModal(){modal.hidden=true}
 $('#openSettings').addEventListener('click',openModal);
 $('#closeSettings').addEventListener('click',closeModal);
 modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
-$('#provider').addEventListener('change',e=>{settings.provider=e.target.value;$('#model').value=providerDefaults(settings.provider);$('#endpointRow').hidden=settings.provider!=='custom'});
+$('#provider').addEventListener('change',e=>{settings.provider=e.target.value;if(settings.provider!=='free'&&!$('#model').value)$('#model').value=providerDefaults(settings.provider);settings.model=$('#model').value.trim();updateProviderUI();loadModels()});
+$('#apiKey').addEventListener('input',e=>{settings.key=e.target.value.trim()});
+$('#model').addEventListener('input',e=>{settings.model=e.target.value.trim()});
+$('#endpoint').addEventListener('input',e=>{settings.endpoint=e.target.value.trim()});
 $('#fillCodeBtn').addEventListener('click',fillFromCode);
-$('#saveSettings').addEventListener('click',()=>{settings.provider=$('#provider').value;settings.key=$('#apiKey').value.trim();settings.model=$('#model').value.trim();settings.endpoint=$('#endpoint').value.trim();if($('#rememberKey').checked){localStorage.setItem('shuvolex.settings',JSON.stringify(settings))}else{localStorage.removeItem('shuvolex.settings')}modal.hidden=true;if(settings.key){engine='ai';updateEngineUI();note('AI mode ready. Press Humanize.')}else{closeModal()}});
-$('#testKey').addEventListener('click',async()=>{settings.provider=$('#provider').value;settings.key=$('#apiKey').value.trim();settings.model=$('#model').value.trim();settings.endpoint=$('#endpoint').value.trim();if(!settings.key){status.textContent='Enter a key first.';status.className='modal-status err';return}status.textContent='Testing...';status.className='modal-status';try{await callAI('Reply with the single word: ok');status.textContent='Connection works.';status.className='modal-status ok'}catch(err){status.textContent='Failed: '+err.message;status.className='modal-status err'}});
+$('#saveSettings').addEventListener('click',()=>{settings.provider=$('#provider').value;settings.key=$('#apiKey').value.trim();settings.model=$('#model').value.trim();settings.endpoint=$('#endpoint').value.trim();if($('#rememberKey').checked){localStorage.setItem('shuvolex.settings',JSON.stringify(settings))}else{localStorage.removeItem('shuvolex.settings')}closeModal();if(settings.provider==='free'){engine='ai';updateEngineUI();note('Free AI mode is ready. Just press Humanize.')}else if(settings.key){engine='ai';updateEngineUI();note('AI mode ready. Press Humanize.')}else{note('No key entered. Free built-in is still available from the provider list.')}});
+$('#testKey').addEventListener('click',async()=>{settings.provider=$('#provider').value;settings.key=$('#apiKey').value.trim();settings.model=$('#model').value.trim();settings.endpoint=$('#endpoint').value.trim();if(settings.provider!=='free'&&!settings.key){status.textContent='Enter a key first, or choose the free built-in provider.';status.className='modal-status err';return}status.textContent='Testing...';status.className='modal-status';try{await callAI('Reply with the single word: ok');status.textContent='Connection works.';status.className='modal-status ok'}catch(err){status.textContent='Failed: '+err.message;status.className='modal-status err'}});
 $$('#modes .seg').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;$$('#modes .seg').forEach(x=>x.classList.toggle('active',x===b))}));
 input.addEventListener('input',refresh);
 $$('.humanizeBtn').forEach(b=>b.addEventListener('click',run));
@@ -204,4 +211,4 @@ $('#pasteBtn').addEventListener('click',async()=>{try{const t=await navigator.cl
 $('#copyBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(lastResult);note('Copied to clipboard.')}catch(e){note('Copy failed. Select the text and press Ctrl+C.')}});
 $('#downloadBtn').addEventListener('click',()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lastResult],{type:'text/plain'}));a.download='shuvolex-humanized.txt';a.click();URL.revokeObjectURL(a.href)});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();run()}if(e.key==='Escape'&&!modal.hidden)closeModal()});
-refresh();
+updateEngineUI();refresh();
