@@ -1,6 +1,6 @@
 const $=s=>document.querySelector(s);
-const input=$('#inputText'),output=$('#outputText'),list=$('#patternList'),strengthSel=$('#strength'),toast=$('#toast');
-let mode='academic',engine='local';
+const input=$('#inputText'),output=$('#outputText'),list=$('#patternList'),strengthSel=$('#strength'),toast=$('#toast'),hlToggle=$('#highlightChg');
+let mode='academic',engine='local',lastResult='';
 const sample=`In order to achieve this goal, it is important to note that the implementation of transparent assessment practices serves as a crucial component of the modern educational landscape. Additionally, experts argue that this approach not only fosters engagement but also plays a pivotal role in shaping outcomes. The system boasts a wide range of features, showcasing its vibrant potential. In conclusion, the future looks bright. I hope this helps!`;
 const rules=[
 [1,'Inflated importance',/\b(crucial|pivotal|vital|significant|testament|key turning point|indelible mark|deeply rooted)\b/gi,'State the concrete fact instead of claiming broad importance.'],
@@ -50,10 +50,14 @@ const basic=[
 [/\bat this point in time\b/gi,'now'],[/\bin the event that\b/gi,'if'],
 [/\bhas the ability to\b/gi,'can'],[/\bit is important to note that\s*/gi,''],
 [/\bit goes without saying that\s*/gi,''],[/\bneedless to say,?\s*/gi,''],
+[/\bit is worth noting that\s*/gi,''],[/\bfirst and foremost,?\s*/gi,'First, '],
+[/\beach and every\b/gi,'every'],[/\ba wide range of\b/gi,'many'],[/\ba wide array of\b/gi,'many'],[/\ba plethora of\b/gi,'many'],
+[/\ba (crucial|vital|pivotal|key) part of\b/gi,'part of'],
 [/\b[Ss]erves as\b/g,m=>m[0]==='S'?'Is':'is'],[/\b[Ss]tands as\b/g,m=>m[0]==='S'?'Is':'is'],
 [/\bboasts\b/gi,'has'],[/\bis home to\b/gi,'has'],[/\bare home to\b/gi,'have'],
 [/\bplays? a (crucial|vital|key|pivotal|significant|critical|major) role in\b/gi,'is important for'],
 [/\bAdditionally,\s*/g,'Also, '],[/\badditionally\b/gi,'also'],
+[/\bIn addition,\s*/g,'Also, '],
 [/\butilize\b/gi,'use'],[/\butilizes\b/gi,'uses'],[/\bprior to\b/gi,'before'],[/\bcommence\b/gi,'begin'],
 [/\bdelves? into\b/gi,m=>m[0]==='d'?'examines':'Examine'],[/\bdelving into\b/gi,'examining'],
 [/\bcrucial\b/gi,'essential'],[/\bpivotal\b/gi,'decisive'],[/\bvibrant\b/gi,'lively'],
@@ -62,18 +66,29 @@ const basic=[
 [/\benhances?\b/gi,'improves'],[/\bintricate\b/gi,'complex'],[/\binterplay\b/gi,'interaction'],
 [/\btapestry\b/gi,'mix'],[/\btestament\b/gi,'sign'],[/\bvaluable\b/gi,'useful'],
 [/\brenowned\b/gi,'well-known'],[/\bgroundbreaking\b/gi,'novel'],[/\bbreathtaking\b/gi,''],[/\bstunning\b/gi,''],
-[/\bmust-visit\b/gi,''],[/\bnestled\b/gi,'located'],
-[/\ba wide range of\b/gi,'many'],[/\ba plethora of\b/gi,'many'],[/\ba wide array of\b/gi,'many'],
-[/\bfirst and foremost\b/gi,'first'],[/\beach and every\b/gi,'every'],
+[/\bmust-visit\b/gi,''],[/\bnestled\b/gi,'located'],[/\brealm\b/gi,'area'],[/\bprofound\b/gi,'deep'],
+[/, highlighting\b/gi,', showing'],[/, underscoring\b/gi,', showing'],[/, showcasing\b/gi,', showing'],
+[/, emphasizing\b/gi,', stressing'],[/, symbolizing\b/gi,', representing'],[/, reflecting\b/gi,', showing'],
 [/\bnot only\s+([^,.!?;]+?)\s+but also\s+/gi,'$1 and '],
 [/\s*[\u2014\u2013]\s*/g,', '],
 [/[\u201C\u201D]/g,'"'],[/[\u2018\u2019]/g,"'"]
 ];basic.forEach(x=>{t=t.replace(x[0],x[1])});
 if(strengthSel.value!=='light'){t=t.replace(/\s*\b(I hope this helps!?|Of course!|Certainly!|Great question!|Let me know if you[^.!?]*[.!?]?)/gi,' ');t=t.replace(/\b(The future looks bright|Exciting times lie ahead)\.?\s*/gi,'');t=t.replace(/\bIn conclusion,\s*/gi,'')}
 if(mode==='academic'){expand.forEach(x=>{t=t.replace(x[0],x[1])});t=t.replace(/\bI think\b/g,'The evidence suggests').replace(/\bI believe\b/gi,'The evidence suggests').replace(/\bwe can see that\b/gi,'').replace(/\bvery\s+(important|significant|crucial)\b/gi,'$1').replace(/\bkind of\b/gi,'somewhat')}
-if(mode==='blog'){t=t.replace(/\bthe implementation of\b/gi,'using').replace(/\bthe utilization of\b/gi,'using').replace(/\bindividuals\b/gi,'people').replace(/\bdo not\b/gi,"don't").replace(/\bcannot\b/gi,"can't").replace(/\bit is\b/gi,"it's")}
+if(mode!=='academic'){t=t.replace(/\bFurthermore,\s*/g,'Also, ').replace(/\bMoreover,\s*/g,'Also, ').replace(/\bnumerous\b/gi,'many').replace(/\bsufficient\b/gi,'enough').replace(/\bobtain\b/gi,'get').replace(/\bpurchase\b/gi,'buy').replace(/\bassist\b/gi,'help').replace(/\bdemonstrates?\b/gi,'shows').replace(/\bapproximately\b/gi,'about')}
+if(mode==='blog'){t=t.replace(/\bthe implementation of\b/gi,'using').replace(/\bthe utilization of\b/gi,'using').replace(/\bindividuals\b/gi,'people').replace(/\bdo not\b/gi,"don't").replace(/\bcannot\b/gi,"can't").replace(/\bit is\b/gi,"it's").replace(/\bTherefore,\s*/g,'So, ').replace(/\bThus,\s*/g,'So, ')}
 if(strengthSel.value==='deep'){t=t.replace(/\b(actually|really|quite)\s*/gi,'').replace(/\bvery\s+/gi,'')}
 t=t.replace(/\s+([,.;!?])/g,'$1').replace(/,\s*,/g,',').replace(/([.!?])\s*,\s*/g,'$1 ').replace(/(^|[.!?]\s+)also\b/g,(m,p)=>p+'Also').replace(/\s{2,}/g,' ').replace(/\n{3,}/g,'\n\n').trim();return t}
+function escapeHTML(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function diffRender(src,out){const A=(src.match(/\S+/g)||[]),B=(out.match(/\S+/g)||[]);
+if(A.length*B.length>2500000){output.innerHTML=escapeHTML(out);return -1}
+const n=A.length,m=B.length,dp=[];for(let i=0;i<=n;i++)dp[i]=new Uint16Array(m+1);
+for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)dp[i][j]=A[i]===B[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+const keep=new Array(m).fill(false);let i=0,j=0;
+while(i<n&&j<m){if(A[i]===B[j]){keep[j]=true;i++;j++}else if(dp[i+1][j]>=dp[i][j+1])i++;else j++}
+const parts=out.split(/(\s+)/);let bi=0,html='',changed=0;
+for(const p of parts){if(!p)continue;if(/^\s+$/.test(p)){html+=p;continue}const w=escapeHTML(p);if(keep[bi]){html+=w}else{html+='<mark>'+w+'</mark>';changed++}bi++}
+output.innerHTML=html;return m?Math.round(changed/m*100):0}
 const settings={provider:'openrouter',key:'',model:'meta-llama/llama-3.1-70b-instruct',endpoint:''};
 try{const saved=JSON.parse(localStorage.getItem('shuvolex.settings')||'null');if(saved)Object.assign(settings,saved)}catch(e){}
 function systemPrompt(){const tone=mode==='academic'?'Use a formal academic register. Expand all contractions. State claims directly instead of first-person hedges like I think. Keep citations, technical terms, numbers, and names exactly as given. Neutral and precise.':mode==='blog'?'Use a conversational blog voice. Contractions are welcome. First person is allowed. Keep personality and asides, but remove sales fluff and AI stock phrases.':'Use plain, natural everyday English. Balanced formality. Clear and direct.';
@@ -105,12 +120,16 @@ return (data.choices&&data.choices[0]&&data.choices[0].message.content||'').trim
 function stat(t){const n=(t.trim().match(/\S+/g)||[]).length;return n+' word'+(n===1?'':'s')+' | '+t.length+' chars'}
 function refresh(){$('#inputStats').textContent=stat(input.value);scan(input.value)}
 function note(m){toast.textContent=m;toast.classList.add('show');clearTimeout(note.t);note.t=setTimeout(()=>toast.classList.remove('show'),2600)}
-function show(r,src){output.textContent=r||'Your humanized text will appear here.';output.classList.toggle('empty',!r);$('#outputStats').textContent=r?stat(r):'Waiting';$('#engineNote').textContent=r?src:'';$('#copyBtn').disabled=$('#downloadBtn').disabled=!r}
+function show(r,src){lastResult=r;$('#outputStats').textContent=r?stat(r):'Waiting';$('#copyBtn').disabled=$('#downloadBtn').disabled=!r;
+if(!r){output.textContent='Your humanized text will appear here.';output.classList.add('empty');$('#engineNote').textContent='';return}
+output.classList.remove('empty');
+if(hlToggle.checked){const pct=diffRender(input.value,r);$('#engineNote').textContent=src+(pct>=0?' | '+pct+'% words changed':'')}else{output.textContent=r;$('#engineNote').textContent=src}}
 function setBusy(b){$('#humanize').disabled=b;$('#humanizeLabel').textContent=b?'Humanizing...':'Humanize'}
 async function run(){const text=input.value.trim();if(!text){note('Paste some text first.');return}
 if(engine==='ai'){if(!settings.key){openModal();note('Add your API key in settings first.');return}
-setBusy(true);try{let r=await callAI(text);r=r.replace(/[\u2014\u2013]/g,',').replace(/\s+([,.;!?])/g,'$1').trim();show(r,'AI rewrite | '+settings.provider);note('Done. Review it before using it.')}catch(err){note('AI request failed: '+err.message)}setBusy(false);return}
-show(revise(text),'Local 35-rule engine');note('Revision ready. Review it before using it.')}
+setBusy(true);try{let r=await callAI(text);r=r.replace(/[\u2014\u2013]/g,',').replace(/\s+([,.;!?])/g,'$1').trim();show(r,'AI rewrite | '+settings.provider);note('Done. Review the highlighted changes.')}catch(err){note('AI request failed: '+err.message)}setBusy(false);return}
+show(revise(text),'Local 35-rule engine');note('Revision ready. Review the highlighted changes.')}
+hlToggle.addEventListener('change',()=>{if(lastResult)show(lastResult,$('#engineNote').textContent.split(' | ')[0])});
 function setEngine(e){engine=e;$('#engineLocal').classList.toggle('active',e==='local');$('#engineAI').classList.toggle('active',e==='ai');if(e==='ai'&&!settings.key)openModal()}
 $('#engineLocal').addEventListener('click',()=>setEngine('local'));
 $('#engineAI').addEventListener('click',()=>setEngine('ai'));
@@ -130,7 +149,7 @@ $('#humanize').addEventListener('click',run);
 $('#sampleBtn').addEventListener('click',()=>{input.value=sample;refresh();run()});
 $('#clearBtn').addEventListener('click',()=>{input.value='';show('','');refresh();input.focus()});
 $('#pasteBtn').addEventListener('click',async()=>{try{const t=await navigator.clipboard.readText();if(t){input.value=t;refresh();note('Pasted from clipboard.')}else note('Clipboard is empty.')}catch(e){note('Clipboard blocked. Click the field and press Ctrl+V.')}});
-$('#copyBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(output.textContent);note('Copied to clipboard.')}catch(e){note('Copy failed. Select the text and press Ctrl+C.')}});
-$('#downloadBtn').addEventListener('click',()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([output.textContent],{type:'text/plain'}));a.download='shuvolex-humanized.txt';a.click();URL.revokeObjectURL(a.href)});
+$('#copyBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(lastResult);note('Copied to clipboard.')}catch(e){note('Copy failed. Select the text and press Ctrl+C.')}});
+$('#downloadBtn').addEventListener('click',()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lastResult],{type:'text/plain'}));a.download='shuvolex-humanized.txt';a.click();URL.revokeObjectURL(a.href)});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();run()}if(e.key==='Escape'&&!modal.hidden)closeModal()});
 refresh();

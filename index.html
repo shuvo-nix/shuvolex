@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=2.0"/>
+<link rel="stylesheet" href="style.css?v=2.1"/>
 </head>
 <body>
 <div class="app">
@@ -17,7 +17,7 @@
   <div class="brand">
     <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
     <span class="brand-name">shuvolex</span>
-    <span class="version">v2.0</span>
+    <span class="version">v2.1</span>
   </div>
   <div class="top-actions">
     <span class="privacy-pill"><span class="dot"></span>Local first. No server.</span>
@@ -25,11 +25,6 @@
     <button class="icon-btn" id="openSettings" title="AI settings" aria-label="AI settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
   </div>
 </header>
-
-<section class="hero">
-  <h1>Paste AI text. Get human writing.</h1>
-  <p>35-pattern review on every keystroke, plus a real AI rewrite when you add your own key. Academic mode is the default.</p>
-</section>
 
 <section class="controls">
   <div class="segmented" id="modes" role="group" aria-label="Writing type">
@@ -44,18 +39,15 @@
       <option value="deep">Deep</option>
     </select>
   </label>
-  <div class="segmented engine-toggle" role="group" aria-label="Engine">
+  <div class="segmented" role="group" aria-label="Engine">
     <button class="seg active" id="engineLocal">Local rules</button>
     <button class="seg" id="engineAI">AI rewrite <span class="mini-badge">your key</span></button>
   </div>
-  <button id="humanize" class="primary-btn">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
-    <span id="humanizeLabel">Humanize</span><kbd>Ctrl+Enter</kbd>
-  </button>
+  <label class="hl-toggle" title="Mark every changed word in the result"><input type="checkbox" id="highlightChg" checked/> Highlight changes</label>
 </section>
 
-<main class="grid">
-  <section class="card">
+<main class="workspace">
+  <section class="card input-card">
     <header class="card-head">
       <h2>Original</h2>
       <div class="card-tools">
@@ -68,7 +60,15 @@
     <footer class="card-foot"><span id="inputStats">0 words</span></footer>
   </section>
 
-  <section class="card">
+  <div class="actions">
+    <button id="humanize" class="primary-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
+      <span id="humanizeLabel">Humanize</span>
+    </button>
+    <span class="hint">Ctrl+Enter</span>
+  </div>
+
+  <section class="card output-card">
     <header class="card-head">
       <h2>Humanized</h2>
       <div class="card-tools">
@@ -134,6 +134,6 @@
 </div>
 
 <div id="toast" class="toast" role="status"></div>
-<script src="app.js?v=2.0"></script>
+<script src="app.js?v=2.1"></script>
 </body>
 </html>
