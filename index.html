@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=2.2"/>
+<link rel="stylesheet" href="style.css?v=2.3"/>
 </head>
 <body>
 <div class="app">
@@ -17,7 +17,7 @@
   <div class="brand">
     <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
     <span class="brand-name">shuvolex</span>
-    <span class="version">v2.2</span>
+    <span class="version">v2.3</span>
   </div>
   <div class="top-actions">
     <span class="privacy-pill"><span class="dot"></span>Local first. No server.</span>
@@ -85,7 +85,7 @@
 </main>
 
 <section class="review">
-  <header><h2>35-pattern review</h2><p>Live checks from the Humanizer skill. A flag is a review prompt, not proof of AI authorship.</p></header>
+  <header><h2>35-pattern review</h2><p>Live checks from the Humanizer skill, including the words-to-watch lists inside each pattern. A flag is a review prompt, not proof of AI authorship.</p></header>
   <div id="patternList" class="chips"><p class="quiet">Paste text to see the review.</p></div>
 </section>
 
@@ -102,7 +102,11 @@
       <h2>AI rewrite settings</h2>
       <button class="icon-btn" id="closeSettings" aria-label="Close settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button>
     </header>
-    <p class="modal-note">Your key is used only from this browser tab and is sent only to the provider you choose. It is never stored in the repository and never sent anywhere else. Tick remember to keep it in this browser for next time.</p>
+    <p class="modal-note">Easiest way: copy the code snippet your provider shows you (OpenRouter, Gemini, or any OpenAI-compatible one), paste it below, and the key, model, and endpoint fill in automatically. Your key is sent only to that provider and never stored in the repository.</p>
+    <label class="field">Paste provider code (optional)
+      <textarea id="codePaste" rows="4" spellcheck="false" placeholder="Paste the JavaScript, TypeScript, or Python snippet from your provider here..."></textarea>
+    </label>
+    <button class="ghost-btn full" id="fillCodeBtn" type="button">Fill key and model from pasted code</button>
     <label class="field">Provider
       <select id="provider">
         <option value="openrouter">OpenRouter (recommended)</option>
@@ -117,12 +121,12 @@
       <input id="apiKey" type="password" placeholder="Paste your key" autocomplete="off"/>
     </label>
     <label class="field">Model
-      <input id="model" list="models" value="meta-llama/llama-3.1-70b-instruct"/>
+      <input id="model" list="models" value="openai/gpt-4o-mini"/>
       <datalist id="models">
-        <option value="meta-llama/llama-3.1-70b-instruct"></option>
-        <option value="google/gemini-flash-1.5"></option>
         <option value="openai/gpt-4o-mini"></option>
+        <option value="google/gemini-flash-1.5"></option>
         <option value="anthropic/claude-3.5-sonnet"></option>
+        <option value="meta-llama/llama-3.3-70b-instruct"></option>
         <option value="gemini-1.5-flash"></option>
         <option value="gemini-1.5-pro"></option>
       </datalist>
@@ -138,6 +142,6 @@
 
 <div id="toast" class="toast" role="status"></div>
 <script>window.addEventListener('error',function(e){var t=document.getElementById('toast');if(t&&e.message){t.textContent='App error: '+e.message;t.classList.add('show');}});</script>
-<script src="app.js?v=2.2"></script>
+<script src="app.js?v=2.3"></script>
 </body>
 </html>

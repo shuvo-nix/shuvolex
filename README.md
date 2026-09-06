@@ -2,7 +2,7 @@
 
 [Open the ShuvoLex website](https://shuvo-nix.github.io/shuvolex/)
 
-ShuvoLex v2.2 is an academic-first AI text humanizer that runs from GitHub Pages. Paste AI-generated text, choose Academic, General, or Blog, and get natural human writing back with every changed word marked automatically.
+ShuvoLex v2.3 is an academic-first AI text humanizer that runs from GitHub Pages. Paste AI-generated text, choose Academic, General, or Blog, and get natural human writing back with every changed word marked automatically.
 
 ## Live website
 
@@ -10,8 +10,8 @@ Use the application here: [https://shuvo-nix.github.io/shuvolex/](https://shuvo-
 
 ## Two engines
 
-1. AI rewrite mode. Click the gear icon, paste your own API key, and ShuvoLex sends your draft plus all 35 Humanizer rules to the model you choose. Supported providers: OpenRouter, Google Gemini, and any OpenAI-compatible endpoint. Your key is used only from your browser tab, is sent only to your provider, and is stored in localStorage only if you tick remember. If you close settings without a key, the app falls back to Local rules automatically.
-2. Local rules mode. A free, offline fallback that runs all 35 pattern checks from the Humanizer `SKILL.md` guidance live as you type, plus a deterministic rewriter: filler removal, AI vocabulary swaps, -ing clause rewrites, staged contrast flattening, dash and quote normalization, chatbot artifact removal, and contraction expansion in Academic mode.
+1. AI rewrite mode. Open settings (gear icon) and either paste your API key or paste the whole code snippet your provider shows you (OpenRouter, Gemini, or any OpenAI-compatible one). ShuvoLex extracts the key, model, and endpoint automatically. The OpenRouter model list loads live, so retired model names are not suggested. Your key is sent only to your provider, never to the repository, and is stored in localStorage only if you tick remember. Closing settings without a key falls back to Local rules.
+2. Local rules mode. A free, offline engine that runs all 35 pattern checks from the Humanizer `SKILL.md` guidance live as you type, including the words-to-watch lists inside each pattern. The rewriter handles filler removal, AI vocabulary swaps, -ing clause rewrites, staged contrast flattening, dash and quote normalization, chatbot artifact removal, contraction expansion in Academic mode, and sentence-rhythm restructuring that splits long uniform sentences at Balanced and Deep strengths.
 
 ## Features
 
@@ -22,18 +22,18 @@ Use the application here: [https://shuvo-nix.github.io/shuvolex/](https://shuvo-
 - Independent clear buttons: the original and rewritten panels each have their own trash icon and never clear each other.
 - Icon toolbar on both panels: paste from clipboard, load sample, clear, copy result, download as .txt.
 - Live 35-pattern review chips with per-pattern advice from the skill.
+- Smart key setup: paste the provider's example code and the app fills in key, model, and endpoint.
+- AI errors persist in the output panel with the exact provider message instead of a vanishing notice.
 - A visible error notice if the script ever fails, instead of silent failure.
 - Modern dark interface, responsive for mobile.
+
+## About the 35 patterns
+
+The Humanizer `SKILL.md` defines exactly 35 numbered patterns. Each pattern also carries a words-to-watch list, which is why the total number of watched terms is much higher. ShuvoLex scans the patterns and those sub-terms, and shows each hit with its pattern number so you can trace it back to the skill.
 
 ## About AI detectors
 
 No editor can guarantee a 0% score on an AI detector. Detectors are probabilistic, disagree with each other, and flag genuine human academic writing regularly. ShuvoLex reduces the patterns detectors look for, shows you exactly which words changed, and the AI rewrite mode goes much further than local rules. Treat detector scores as a rough signal, not a verdict, and always review the text yourself.
-
-## Get an API key for AI mode
-
-- OpenRouter: create a key at openrouter.ai/keys, then use a model such as meta-llama/llama-3.1-70b-instruct or openai/gpt-4o-mini.
-- Google Gemini: create a key in Google AI Studio, then use gemini-1.5-flash.
-- Custom: any OpenAI-compatible chat completions endpoint.
 
 ## Limitations
 
@@ -53,9 +53,9 @@ Open `index.html` in a browser. No build step or backend is needed. AI mode also
 
 ## Files
 
-- `index.html`: interface with icon toolbars, controls bar with Humanize, and AI settings modal
+- `index.html`: interface with icon toolbars, controls bar with Humanize, and AI settings modal with smart paste
 - `style.css`: dark responsive design with amber change marks
-- `app.js`: 35-pattern engine, local rewriter, always-on word diff, and AI provider client
+- `app.js`: 35-pattern engine, local rewriter with rhythm restructuring, always-on word diff, and AI provider client
 
 ## License
 
