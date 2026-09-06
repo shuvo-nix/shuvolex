@@ -2,7 +2,7 @@
 
 [Open the ShuvoLex website](https://shuvo-nix.github.io/shuvolex/)
 
-ShuvoLex v2.1 is an academic-first AI text humanizer that runs from GitHub Pages. Paste AI-generated text, choose Academic, General, or Blog, and get natural human writing back with every changed word highlighted.
+ShuvoLex v2.2 is an academic-first AI text humanizer that runs from GitHub Pages. Paste AI-generated text, choose Academic, General, or Blog, and get natural human writing back with every changed word marked automatically.
 
 ## Live website
 
@@ -10,17 +10,19 @@ Use the application here: [https://shuvo-nix.github.io/shuvolex/](https://shuvo-
 
 ## Two engines
 
-1. AI rewrite mode. Click the gear icon, paste your own API key, and ShuvoLex sends your draft plus all 35 Humanizer rules to the model you choose. Supported providers: OpenRouter, Google Gemini, and any OpenAI-compatible endpoint. Your key is used only from your browser tab, is sent only to your provider, and is stored in localStorage only if you tick remember.
+1. AI rewrite mode. Click the gear icon, paste your own API key, and ShuvoLex sends your draft plus all 35 Humanizer rules to the model you choose. Supported providers: OpenRouter, Google Gemini, and any OpenAI-compatible endpoint. Your key is used only from your browser tab, is sent only to your provider, and is stored in localStorage only if you tick remember. If you close settings without a key, the app falls back to Local rules automatically.
 2. Local rules mode. A free, offline fallback that runs all 35 pattern checks from the Humanizer `SKILL.md` guidance live as you type, plus a deterministic rewriter: filler removal, AI vocabulary swaps, -ing clause rewrites, staged contrast flattening, dash and quote normalization, chatbot artifact removal, and contraction expansion in Academic mode.
 
 ## Features
 
 - Academic mode selected by default; General and Blog also available.
 - Light, Balanced, and Deep rewrite strengths.
-- Highlighted diff: every changed word is marked in the result, with a percentage of words changed. Toggle it off with the Highlight changes switch.
-- Compact one-line controls on desktop; on mobile the Humanize button sits full-width directly under the input.
-- Icon toolbar on both panels: paste from clipboard, load sample, clear input, copy result, download as .txt.
+- Always-on change marking: every rewritten word is marked in amber, with a percentage of words changed in the footer.
+- Humanize sits in the controls bar on desktop and full-width under the input on mobile.
+- Independent clear buttons: the original and rewritten panels each have their own trash icon and never clear each other.
+- Icon toolbar on both panels: paste from clipboard, load sample, clear, copy result, download as .txt.
 - Live 35-pattern review chips with per-pattern advice from the skill.
+- A visible error notice if the script ever fails, instead of silent failure.
 - Modern dark interface, responsive for mobile.
 
 ## About AI detectors
@@ -51,9 +53,9 @@ Open `index.html` in a browser. No build step or backend is needed. AI mode also
 
 ## Files
 
-- `index.html`: interface with icon toolbar, controls bar, and AI settings modal
-- `style.css`: dark responsive design with highlighted diff marks
-- `app.js`: 35-pattern engine, local rewriter, word-level diff, and AI provider client
+- `index.html`: interface with icon toolbars, controls bar with Humanize, and AI settings modal
+- `style.css`: dark responsive design with amber change marks
+- `app.js`: 35-pattern engine, local rewriter, always-on word diff, and AI provider client
 
 ## License
 

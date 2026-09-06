@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=2.1"/>
+<link rel="stylesheet" href="style.css?v=2.2"/>
 </head>
 <body>
 <div class="app">
@@ -17,7 +17,7 @@
   <div class="brand">
     <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
     <span class="brand-name">shuvolex</span>
-    <span class="version">v2.1</span>
+    <span class="version">v2.2</span>
   </div>
   <div class="top-actions">
     <span class="privacy-pill"><span class="dot"></span>Local first. No server.</span>
@@ -43,7 +43,10 @@
     <button class="seg active" id="engineLocal">Local rules</button>
     <button class="seg" id="engineAI">AI rewrite <span class="mini-badge">your key</span></button>
   </div>
-  <label class="hl-toggle" title="Mark every changed word in the result"><input type="checkbox" id="highlightChg" checked/> Highlight changes</label>
+  <button class="primary-btn humanizeBtn" id="humanizeBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
+    <span class="humanizeLabel">Humanize</span>
+  </button>
 </section>
 
 <main class="workspace">
@@ -53,19 +56,18 @@
       <div class="card-tools">
         <button class="icon-btn" id="pasteBtn" title="Paste from clipboard" aria-label="Paste from clipboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></button>
         <button class="icon-btn" id="sampleBtn" title="Load academic sample" aria-label="Load academic sample"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></button>
-        <button class="icon-btn danger" id="clearBtn" title="Clear input" aria-label="Clear input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+        <button class="icon-btn danger" id="clearBtn" title="Clear original text" aria-label="Clear original text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
       </div>
     </header>
     <textarea id="inputText" spellcheck="true" placeholder="Paste AI-generated text here..."></textarea>
     <footer class="card-foot"><span id="inputStats">0 words</span></footer>
   </section>
 
-  <div class="actions">
-    <button id="humanize" class="primary-btn">
+  <div class="mobile-action">
+    <button class="primary-btn humanizeBtn" id="humanizeBtnM">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
-      <span id="humanizeLabel">Humanize</span>
+      <span class="humanizeLabel">Humanize</span>
     </button>
-    <span class="hint">Ctrl+Enter</span>
   </div>
 
   <section class="card output-card">
@@ -74,9 +76,10 @@
       <div class="card-tools">
         <button class="icon-btn" id="copyBtn" title="Copy result" aria-label="Copy result" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
         <button class="icon-btn" id="downloadBtn" title="Download .txt" aria-label="Download .txt" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></button>
+        <button class="icon-btn danger" id="clearOutBtn" title="Clear rewritten text" aria-label="Clear rewritten text" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
       </div>
     </header>
-    <div id="outputText" class="output empty" aria-live="polite">Your humanized text will appear here.</div>
+    <div id="outputText" class="output empty" aria-live="polite">Your humanized text will appear here. Changed words are marked automatically.</div>
     <footer class="card-foot"><span id="outputStats">Waiting</span><span id="engineNote" class="engine-note"></span></footer>
   </section>
 </main>
@@ -134,6 +137,7 @@
 </div>
 
 <div id="toast" class="toast" role="status"></div>
-<script src="app.js?v=2.1"></script>
+<script>window.addEventListener('error',function(e){var t=document.getElementById('toast');if(t&&e.message){t.textContent='App error: '+e.message;t.classList.add('show');}});</script>
+<script src="app.js?v=2.2"></script>
 </body>
 </html>

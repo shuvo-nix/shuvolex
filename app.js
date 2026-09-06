@@ -1,5 +1,5 @@
-const $=s=>document.querySelector(s);
-const input=$('#inputText'),output=$('#outputText'),list=$('#patternList'),strengthSel=$('#strength'),toast=$('#toast'),hlToggle=$('#highlightChg');
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const input=$('#inputText'),output=$('#outputText'),list=$('#patternList'),strengthSel=$('#strength'),toast=$('#toast');
 let mode='academic',engine='local',lastResult='';
 const sample=`In order to achieve this goal, it is important to note that the implementation of transparent assessment practices serves as a crucial component of the modern educational landscape. Additionally, experts argue that this approach not only fosters engagement but also plays a pivotal role in shaping outcomes. The system boasts a wide range of features, showcasing its vibrant potential. In conclusion, the future looks bright. I hope this helps!`;
 const rules=[
@@ -120,34 +120,37 @@ return (data.choices&&data.choices[0]&&data.choices[0].message.content||'').trim
 function stat(t){const n=(t.trim().match(/\S+/g)||[]).length;return n+' word'+(n===1?'':'s')+' | '+t.length+' chars'}
 function refresh(){$('#inputStats').textContent=stat(input.value);scan(input.value)}
 function note(m){toast.textContent=m;toast.classList.add('show');clearTimeout(note.t);note.t=setTimeout(()=>toast.classList.remove('show'),2600)}
-function show(r,src){lastResult=r;$('#outputStats').textContent=r?stat(r):'Waiting';$('#copyBtn').disabled=$('#downloadBtn').disabled=!r;
-if(!r){output.textContent='Your humanized text will appear here.';output.classList.add('empty');$('#engineNote').textContent='';return}
+function show(r,src){lastResult=r;$('#outputStats').textContent=r?stat(r):'Waiting';$('#copyBtn').disabled=$('#downloadBtn').disabled=$('#clearOutBtn').disabled=!r;
+if(!r){output.textContent='Your humanized text will appear here. Changed words are marked automatically.';output.classList.add('empty');$('#engineNote').textContent='';return}
 output.classList.remove('empty');
-if(hlToggle.checked){const pct=diffRender(input.value,r);$('#engineNote').textContent=src+(pct>=0?' | '+pct+'% words changed':'')}else{output.textContent=r;$('#engineNote').textContent=src}}
-function setBusy(b){$('#humanize').disabled=b;$('#humanizeLabel').textContent=b?'Humanizing...':'Humanize'}
+const pct=diffRender(input.value,r);$('#engineNote').textContent=src+(pct>=0?' | '+pct+'% words changed':'')}
+function setBusy(b){$$('.humanizeBtn').forEach(x=>x.disabled=b);$$('.humanizeLabel').forEach(x=>x.textContent=b?'Humanizing...':'Humanize')}
 async function run(){const text=input.value.trim();if(!text){note('Paste some text first.');return}
-if(engine==='ai'){if(!settings.key){openModal();note('Add your API key in settings first.');return}
-setBusy(true);try{let r=await callAI(text);r=r.replace(/[\u2014\u2013]/g,',').replace(/\s+([,.;!?])/g,'$1').trim();show(r,'AI rewrite | '+settings.provider);note('Done. Review the highlighted changes.')}catch(err){note('AI request failed: '+err.message)}setBusy(false);return}
-show(revise(text),'Local 35-rule engine');note('Revision ready. Review the highlighted changes.')}
-hlToggle.addEventListener('change',()=>{if(lastResult)show(lastResult,$('#engineNote').textContent.split(' | ')[0])});
-function setEngine(e){engine=e;$('#engineLocal').classList.toggle('active',e==='local');$('#engineAI').classList.toggle('active',e==='ai');if(e==='ai'&&!settings.key)openModal()}
+if(engine==='ai'){if(!settings.key){openModal();note('Add your API key, or stay on Local rules.');return}
+setBusy(true);try{let r=await callAI(text);r=r.replace(/[\u2014\u2013]/g,',').replace(/\s+([,.;!?])/g,'$1').trim();show(r,'AI rewrite | '+settings.provider);note('Done. Changed words are marked.')}catch(err){note('AI request failed: '+err.message)}setBusy(false);return}
+const r=revise(text);
+if(r===text){note('No patterns matched. This text already looks clean.')}else{note('Revision ready. Changed words are marked.')}
+show(r,'Local 35-rule engine')}
+function updateEngineUI(){$('#engineLocal').classList.toggle('active',engine==='local');$('#engineAI').classList.toggle('active',engine==='ai')}
+function setEngine(e){engine=e;updateEngineUI();if(e==='ai'&&!settings.key)openModal()}
 $('#engineLocal').addEventListener('click',()=>setEngine('local'));
 $('#engineAI').addEventListener('click',()=>setEngine('ai'));
 const modal=$('#settingsModal'),status=$('#settingsStatus');
 function providerDefaults(p){return p==='gemini'?'gemini-1.5-flash':p==='custom'?'gpt-4o-mini':'meta-llama/llama-3.1-70b-instruct'}
 function openModal(){$('#provider').value=settings.provider;$('#apiKey').value=settings.key;$('#model').value=settings.model||providerDefaults(settings.provider);$('#endpoint').value=settings.endpoint;$('#endpointRow').hidden=settings.provider!=='custom';status.textContent='';status.className='modal-status';modal.hidden=false}
-function closeModal(){modal.hidden=true}
+function closeModal(){modal.hidden=true;if(engine==='ai'&&!settings.key){engine='local';updateEngineUI();note('No key saved. Switched back to Local rules.')}}
 $('#openSettings').addEventListener('click',openModal);
 $('#closeSettings').addEventListener('click',closeModal);
 modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
 $('#provider').addEventListener('change',e=>{settings.provider=e.target.value;$('#model').value=providerDefaults(settings.provider);$('#endpointRow').hidden=settings.provider!=='custom'});
-$('#saveSettings').addEventListener('click',()=>{settings.provider=$('#provider').value;settings.key=$('#apiKey').value.trim();settings.model=$('#model').value.trim();settings.endpoint=$('#endpoint').value.trim();if($('#rememberKey').checked){localStorage.setItem('shuvolex.settings',JSON.stringify(settings))}else{localStorage.removeItem('shuvolex.settings')}closeModal();note(settings.key?'AI mode ready. Press Humanize.':'Settings saved. No key set, local mode stays active.');if(settings.key)setEngine('ai')});
+$('#saveSettings').addEventListener('click',()=>{settings.provider=$('#provider').value;settings.key=$('#apiKey').value.trim();settings.model=$('#model').value.trim();settings.endpoint=$('#endpoint').value.trim();if($('#rememberKey').checked){localStorage.setItem('shuvolex.settings',JSON.stringify(settings))}else{localStorage.removeItem('shuvolex.settings')}modal.hidden=true;if(settings.key){engine='ai';updateEngineUI();note('AI mode ready. Press Humanize.')}else{closeModal()}});
 $('#testKey').addEventListener('click',async()=>{settings.provider=$('#provider').value;settings.key=$('#apiKey').value.trim();settings.model=$('#model').value.trim();settings.endpoint=$('#endpoint').value.trim();if(!settings.key){status.textContent='Enter a key first.';status.className='modal-status err';return}status.textContent='Testing...';status.className='modal-status';try{await callAI('Reply with the single word: ok');status.textContent='Connection works.';status.className='modal-status ok'}catch(err){status.textContent='Failed: '+err.message;status.className='modal-status err'}});
-document.querySelectorAll('#modes .seg').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('#modes .seg').forEach(x=>x.classList.toggle('active',x===b))}));
+$$('#modes .seg').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;$$('#modes .seg').forEach(x=>x.classList.toggle('active',x===b))}));
 input.addEventListener('input',refresh);
-$('#humanize').addEventListener('click',run);
+$$('.humanizeBtn').forEach(b=>b.addEventListener('click',run));
 $('#sampleBtn').addEventListener('click',()=>{input.value=sample;refresh();run()});
-$('#clearBtn').addEventListener('click',()=>{input.value='';show('','');refresh();input.focus()});
+$('#clearBtn').addEventListener('click',()=>{input.value='';refresh();input.focus();note('Original cleared. Rewritten text kept.')});
+$('#clearOutBtn').addEventListener('click',()=>{show('','');note('Rewritten text cleared.')});
 $('#pasteBtn').addEventListener('click',async()=>{try{const t=await navigator.clipboard.readText();if(t){input.value=t;refresh();note('Pasted from clipboard.')}else note('Clipboard is empty.')}catch(e){note('Clipboard blocked. Click the field and press Ctrl+V.')}});
 $('#copyBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(lastResult);note('Copied to clipboard.')}catch(e){note('Copy failed. Select the text and press Ctrl+C.')}});
 $('#downloadBtn').addEventListener('click',()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lastResult],{type:'text/plain'}));a.download='shuvolex-humanized.txt';a.click();URL.revokeObjectURL(a.href)});
